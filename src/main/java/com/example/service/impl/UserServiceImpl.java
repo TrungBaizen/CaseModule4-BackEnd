@@ -69,6 +69,7 @@ public class UserServiceImpl implements UserService {
         }
         user = this.findByUsername(userName);
         return user;
+
     }
 
     @Override
