@@ -19,7 +19,6 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private LocalDateTime orderDate;
-    private Double total;
     @ManyToOne
     private User user;
 
