@@ -5,6 +5,8 @@ import com.example.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,13 +26,13 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<Product> create(@RequestBody Product product) {
-        return new ResponseEntity<>(productService.save(product), HttpStatus.CREATED);
+    public ResponseEntity<Product> create(@Validated @RequestBody Product product, BindingResult bindingResult) {
+        return new ResponseEntity<>(productService.save(product,bindingResult), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Product> update(@PathVariable Long id,@RequestBody Product product){
-        return new ResponseEntity<>(productService.update(product,id), HttpStatus.OK);
+    public ResponseEntity<Product> update(@Validated @PathVariable Long id,@RequestBody Product product,BindingResult bindingResult){
+        return new ResponseEntity<>(productService.update(product,id,bindingResult), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
