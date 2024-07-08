@@ -17,10 +17,10 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotEmpty
+    @NotEmpty(message = "Không để trống")
     @Column(unique = true)
     private String name;
-    @NotNull
+    @NotNull(message = "Không để trống")
     private Double price;
     private String image;
     @ManyToOne
