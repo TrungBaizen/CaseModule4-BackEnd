@@ -1,7 +1,6 @@
 package com.example.controller;
 
 import com.example.service.OrderService;
-import com.example.service.impl.OrderServiceImpl;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/orders")
+@CrossOrigin("*")
 public class OrderUserController {
     @Autowired
     private OrderService orderService;
@@ -24,7 +24,7 @@ public class OrderUserController {
             BindingResult bindingResult) {
 
         try {
-            orderService.add(userId, productId, quantity, bindingResult);
+            orderService.addOrder(userId, productId, quantity, bindingResult);
             return new ResponseEntity<>("Order added successfully", HttpStatus.OK);
 
         } catch (IllegalArgumentException e) {

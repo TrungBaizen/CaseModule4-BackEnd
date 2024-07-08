@@ -14,7 +14,6 @@ import java.util.List;
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/computers")
-@RestControllerAdvice(basePackageClasses = ComputerController.class)
 public class ComputerController {
     private final ComputerService computerService;
     @Autowired

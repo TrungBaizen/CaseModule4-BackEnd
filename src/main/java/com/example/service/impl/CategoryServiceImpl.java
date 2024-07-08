@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
-    private CategoryRepository categoryRepository;
+    private final CategoryRepository categoryRepository;
 
     @Autowired
     public CategoryServiceImpl(CategoryRepository categoryRepository) {
@@ -50,8 +50,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category findById(Long id) {
-        Optional<Category> carOptional = categoryRepository.findById(id);
-        if (carOptional.isPresent()) {
+        Optional<Category> category = categoryRepository.findById(id);
+        if (category.isPresent()) {
             return categoryRepository.findById(id).get();
         }
         throw new IllegalArgumentException();
@@ -66,11 +66,17 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<Category> findAll() {
+        if (categoryRepository.findAll().isEmpty()) {
+            throw new IllegalArgumentException();
+        }
         return categoryRepository.findAll();
     }
 
     @Override
     public List<Category> findByName(String name) {
-        return categoryRepository.findByName(name);
+        if (categoryRepository.findByNameContaining(name).isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        return categoryRepository.findByNameContaining(name);
     }
 }

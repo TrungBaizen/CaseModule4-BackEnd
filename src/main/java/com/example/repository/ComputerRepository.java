@@ -8,5 +8,6 @@ import java.util.List;
 
 @Repository
 public interface ComputerRepository extends JpaRepository<Computer,Long> {
-    List<Computer> findByName(String name);
+    List<Computer> findByNameContaining(String name);
+    boolean existsComputerByName(String name);
 }

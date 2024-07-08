@@ -1,13 +1,18 @@
 package com.example.service.impl;
 
+import com.example.controller.ExceptionController;
+import com.example.model.Category;
 import com.example.model.Product;
 import com.example.repository.ProductRepository;
 import com.example.service.ProductService;
+import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -18,18 +23,37 @@ public class ProductServiceImpl implements ProductService {
     }
     @Override
     public Product save(Product product, BindingResult bindingResult) {
+        List<String> errors = ExceptionController.getMessageError(bindingResult);
+        if (productRepository.existsProductByName(product.getName())) {
+            errors.add("name: Tên đã tồn tại");
+        }
+        if (errors.size() > 0) {
+            throw new ValidationException(errors.stream().collect(Collectors.joining("; ")));
+        }
         return productRepository.save(product);
     }
 
     @Override
     public Product update(Product product, Long id, BindingResult bindingResult) {
+        findById(id);
+        List<String> errors = ExceptionController.getMessageError(bindingResult);
+        if (productRepository.existsProductByName(product.getName())) {
+            errors.add("name: Tên đã tồn tại");
+        }
+        if (errors.size() > 0) {
+            throw new ValidationException(errors.stream().collect(Collectors.joining("; ")));
+        }
         product.setId(id);
         return productRepository.save(product);
     }
 
     @Override
     public Product findById(Long id) {
-        return productRepository.findById(id).get();
+        Optional<Product> product = productRepository.findById(id);
+        if (product.isPresent()) {
+            return productRepository.findById(id).get();
+        }
+        throw new IllegalArgumentException();
     }
 
     @Override
@@ -41,11 +65,17 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<Product> findAll() {
+        if (productRepository.findAll().isEmpty()) {
+            throw new IllegalArgumentException();
+        }
         return productRepository.findAll();
     }
 
     @Override
     public List<Product> findByName(String name) {
-        return productRepository.findByName(name);
+        if (productRepository.findByNameContaining(name).isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        return productRepository.findByNameContaining(name);
     }
 }
