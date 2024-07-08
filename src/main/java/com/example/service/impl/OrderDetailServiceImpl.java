@@ -20,4 +20,9 @@ public class OrderDetailServiceImpl implements OrderDetailService {
     public void deleteOrderByOrderDetailId(Long orderDetailId) {
         orderDetailRepository.deleteOrderByOrderDetailId(orderDetailId);
     }
+
+    @Override
+    public List<OrderAdminDTO> getOrderDetailsByUsername(String username) {
+        return orderDetailRepository.getOrderDetailsByUsername(username);
+    }
 }

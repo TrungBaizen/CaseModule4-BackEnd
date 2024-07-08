@@ -27,4 +27,10 @@ public class OrderAdminController {
         orderDetailService.deleteOrderByOrderDetailId(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping(value = "/by_username/{username}")
+    public ResponseEntity<List<OrderAdminDTO>> getOrderDetailsByUsername(@PathVariable String username) {
+        List<OrderAdminDTO> orderDetailsByUsername = orderDetailService.getOrderDetailsByUsername(username);
+        return ResponseEntity.ok(orderDetailsByUsername);
+    }
 }
