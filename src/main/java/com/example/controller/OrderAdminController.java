@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import com.example.model.DTO.OrderAdminDTO;
+import com.example.service.OrderDetailService;
 import com.example.service.impl.OrderDetailServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -14,7 +15,7 @@ import java.util.List;
 @RequestMapping("/order_admin")
 public class OrderAdminController {
     @Autowired
-    private OrderDetailServiceImpl orderDetailService;
+    private OrderDetailService orderDetailService;
     @GetMapping(value = "/list")
     public ResponseEntity<List<OrderAdminDTO>> getOrderAdminList(@PageableDefault(value = 5) Pageable pageable) {
         List<OrderAdminDTO> orderAdminList = orderDetailService.findOrderDetailsWithTotals(pageable);
@@ -23,7 +24,7 @@ public class OrderAdminController {
 
     @PostMapping(value = "/delete/{id}")
     public ResponseEntity<?> deleteOrderDetail(@PathVariable Long id) {
-
+        orderDetailService.deleteOrderByOrderDetailId(id);
         return ResponseEntity.noContent().build();
     }
 }

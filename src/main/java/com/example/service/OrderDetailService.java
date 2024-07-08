@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface OrderDetailService {
     List<OrderAdminDTO> findOrderDetailsWithTotals(Pageable pageable);
+
+    void deleteOrderByOrderDetailId(Long orderDetailId);
 }
