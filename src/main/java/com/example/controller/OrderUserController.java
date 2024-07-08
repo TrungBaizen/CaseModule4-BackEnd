@@ -20,14 +20,7 @@ public class OrderUserController {
             @RequestParam Long productId,
             @RequestParam @Valid Integer quantity,
             BindingResult bindingResult) {
-
-        try {
-            orderService.addOrder(userId, productId, quantity, bindingResult);
-            return new ResponseEntity<>("Order added successfully", HttpStatus.OK);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Failed to add order", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        orderService.addOrder(userId, productId, quantity, bindingResult);
+        return new ResponseEntity<>("Order added successfully", HttpStatus.OK);
     }
 }

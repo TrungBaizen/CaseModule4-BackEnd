@@ -28,9 +28,9 @@ public class OrderAdminController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping(value = "/by_username/{username}")
-    public ResponseEntity<List<OrderAdminDTO>> getOrderDetailsByUsername(@PathVariable String username) {
-        List<OrderAdminDTO> orderDetailsByUsername = orderDetailService.getOrderDetailsByUsername(username);
+    @GetMapping(value = "/search")
+    public ResponseEntity<List<OrderAdminDTO>> getOrderDetailsByUsername(@RequestParam String username ,@PageableDefault(value = 5) Pageable pageable) {
+        List<OrderAdminDTO> orderDetailsByUsername = orderDetailService.getOrderDetailsByUsername(username , pageable);
         return ResponseEntity.ok(orderDetailsByUsername);
     }
 }

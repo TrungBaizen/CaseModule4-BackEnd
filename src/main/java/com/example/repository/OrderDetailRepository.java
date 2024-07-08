@@ -24,5 +24,5 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, Long> 
     @Query(value = "CALL get_order_details_by_username(:username)", nativeQuery = true)
     List<OrderAdminDTO> getOrderDetailsByUsername(String username);
 
-
+//    @Query(value = "" , nativeQuery = true)
 }

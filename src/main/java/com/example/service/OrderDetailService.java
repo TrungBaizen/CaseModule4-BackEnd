@@ -10,5 +10,5 @@ public interface OrderDetailService {
 
     void deleteOrderByOrderDetailId(Long orderDetailId);
 
-    List<OrderAdminDTO> getOrderDetailsByUsername(String username);
+    List<OrderAdminDTO> getOrderDetailsByUsername(String username , Pageable pageable);
 }
