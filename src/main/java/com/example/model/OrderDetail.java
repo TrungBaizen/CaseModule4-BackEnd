@@ -26,4 +26,5 @@ public class OrderDetail {
 
     @Min(value = 1 , message = "Số lượng không nhỏ hơn 1")
     private Integer quantity;
+    private Double total;
 }

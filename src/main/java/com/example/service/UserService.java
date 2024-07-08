@@ -24,5 +24,5 @@ public interface UserService extends UserDetailsService {
     boolean checkLogin(User user);
 
     boolean isRegister(User user);
-
+    void updateTokenRemainingTime(Long userId, Long remainingTime);
 }
