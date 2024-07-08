@@ -20,6 +20,7 @@ public class Order {
     private Long id;
     private LocalDateTime orderDate;
     @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @PrePersist
