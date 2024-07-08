@@ -55,7 +55,7 @@ public class OrderServiceImpl implements OrderService {
         Product product = productOptional.get();
 
         // Kiểm tra xem sản phẩm đã có trong giỏ hàng của người dùng chưa
-        OrderDetail orderDetail = orderDetailRepository.findByOrderIdAndProductId(userId, productId).get();
+        OrderDetail orderDetail = orderDetailRepository.findByOrderIdAndProductId(userId, productId);
         if (orderDetail != null) {
             // nếu orderdetail tồn tại
             Integer newQuantity = orderDetail.getQuantity()+quantity;

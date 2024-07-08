@@ -1,6 +1,8 @@
 package com.example.controller;
 
+import com.example.service.OrderService;
 import com.example.service.impl.OrderServiceImpl;
+
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,10 +12,9 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/orders")
-@CrossOrigin("*")
 public class OrderUserController {
     @Autowired
-    private OrderServiceImpl orderService;
+    private OrderService orderService;
 
     @PostMapping("/add")
     public ResponseEntity<String> addOrder(
@@ -23,10 +24,9 @@ public class OrderUserController {
             BindingResult bindingResult) {
 
         try {
-            orderService.addOrder(userId, productId, quantity, bindingResult);
+            orderService.add(userId, productId, quantity, bindingResult);
             return new ResponseEntity<>("Order added successfully", HttpStatus.OK);
-        } catch (ExceptionController.ResourceNotFoundException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
