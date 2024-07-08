@@ -2,10 +2,13 @@ package com.example.model.DTO;
 
 import java.time.LocalDateTime;
 
-public interface OrderUserDTO {
+public interface OrderAdminDTO {
+    Long getId();
     String getName();
     Double getPrice();
     Integer getQuantity();
     Double getTotal();
     LocalDateTime getOrderDate();
+    Double getAllTotal();
+    String getUsername();
 }

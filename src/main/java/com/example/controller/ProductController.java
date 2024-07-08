@@ -25,7 +25,7 @@ public class ProductController {
         return new ResponseEntity<>(productService.findAll(), HttpStatus.OK);
     }
 
-    @PostMapping
+    @PostMapping("/add")
     public ResponseEntity<Product> create(@Validated @RequestBody Product product, BindingResult bindingResult) {
         return new ResponseEntity<>(productService.save(product,bindingResult), HttpStatus.CREATED);
     }
