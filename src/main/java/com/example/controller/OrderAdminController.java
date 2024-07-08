@@ -2,7 +2,6 @@ package com.example.controller;
 
 import com.example.model.DTO.OrderAdminDTO;
 import com.example.service.OrderDetailService;
-import com.example.service.impl.OrderDetailServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -32,5 +31,10 @@ public class OrderAdminController {
     public ResponseEntity<List<OrderAdminDTO>> getOrderDetailsByUsername(@RequestParam String username ,@PageableDefault(value = 5) Pageable pageable) {
         List<OrderAdminDTO> orderDetailsByUsername = orderDetailService.getOrderDetailsByUsername(username , pageable);
         return ResponseEntity.ok(orderDetailsByUsername);
+    }
+
+    @GetMapping("/users/{username}/totalAmount")
+    public Double getTotalAmountByUsername(@PathVariable String username) {
+        return orderDetailService.getTotalAmountByUsername(username);
     }
 }

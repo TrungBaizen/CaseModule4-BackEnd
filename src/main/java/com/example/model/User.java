@@ -24,9 +24,8 @@ public class User implements Serializable {
             joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns = {@JoinColumn(name = "role_id")})
     private Set<Role> roles;
+    private Long time;
 
-    @OneToOne
-    private Computer computer;
 
     public User(String username, String password, Set<Role> roles) {
         this.username = username;
@@ -38,13 +37,21 @@ public class User implements Serializable {
         this.id = id;
     }
 
-    public User(Long id, String username, String password, boolean enabled, Set<Role> roles, Computer computer) {
+    public User(Long id, String username, String password, boolean enabled, Set<Role> roles, Long time) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.enabled = enabled;
         this.roles = roles;
-        this.computer = computer;
+        this.time = time;
+    }
+
+    public Long getTime() {
+        return time;
+    }
+
+    public void setTime(Long time) {
+        this.time = time;
     }
 
     public User() {
@@ -90,11 +97,4 @@ public class User implements Serializable {
         this.roles = roles;
     }
 
-    public Computer getComputer() {
-        return computer;
-    }
-
-    public void setComputer(Computer computer) {
-        this.computer = computer;
-    }
 }

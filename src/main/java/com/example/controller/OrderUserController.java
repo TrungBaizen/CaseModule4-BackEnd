@@ -1,6 +1,6 @@
 package com.example.controller;
 
-import com.example.service.OderService;
+import com.example.service.OrderService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/order_user")
 public class OrderUserController {
     @Autowired
-    private OderService orderService;
+    private OrderService oderDetailService;
 
     @PostMapping("/add")
     public ResponseEntity<String> addOrder(
@@ -20,7 +20,7 @@ public class OrderUserController {
             @RequestParam Long productId,
             @RequestParam @Valid Integer quantity,
             BindingResult bindingResult) {
-        orderService.addOrder(userId, productId, quantity, bindingResult);
+        oderDetailService.addOrder(userId, productId, quantity, bindingResult);
         return new ResponseEntity<>("Order added successfully", HttpStatus.OK);
     }
 }

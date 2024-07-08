@@ -26,6 +26,5 @@ public class OrderDetail {
 
     @Min(1)
     private Integer quantity;
-
     private Double total;
 }

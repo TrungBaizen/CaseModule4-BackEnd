@@ -25,4 +25,11 @@ public class OrderDetailServiceImpl implements OrderDetailService {
     public List<OrderAdminDTO> getOrderDetailsByUsername(String username , Pageable pageable) {
         return orderDetailRepository.getOrderDetailsByUsername(username);
     }
+
+    @Override
+    public Double getTotalAmountByUsername(String username) {
+        return orderDetailRepository.getTotalAmountByUsername(username);
+    }
+
+
 }
