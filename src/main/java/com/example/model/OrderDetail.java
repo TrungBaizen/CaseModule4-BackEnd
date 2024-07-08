@@ -24,7 +24,7 @@ public class OrderDetail {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    @Min(value = 1 , message = "Số lượng không nhỏ hơn 1")
+    @Min(1)
     private Integer quantity;
     private Double total;
 }
