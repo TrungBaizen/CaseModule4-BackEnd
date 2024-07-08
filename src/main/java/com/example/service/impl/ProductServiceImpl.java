@@ -5,6 +5,7 @@ import com.example.repository.ProductRepository;
 import com.example.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
 
 import java.util.List;
 
@@ -16,12 +17,12 @@ public class ProductServiceImpl implements ProductService {
         this.productRepository = productRepository;
     }
     @Override
-    public Product save(Product product) {
+    public Product save(Product product, BindingResult bindingResult) {
         return productRepository.save(product);
     }
 
     @Override
-    public Product update(Product product, Long id) {
+    public Product update(Product product, Long id, BindingResult bindingResult) {
         product.setId(id);
         return productRepository.save(product);
     }

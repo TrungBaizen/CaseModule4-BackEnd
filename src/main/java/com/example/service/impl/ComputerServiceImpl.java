@@ -5,6 +5,7 @@ import com.example.repository.ComputerRepository;
 import com.example.service.ComputerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
 
 import java.util.List;
 
@@ -16,12 +17,12 @@ public class ComputerServiceImpl implements ComputerService {
         this.computerRepository = computerRepository;
     }
     @Override
-    public Computer save(Computer computer) {
+    public Computer save(Computer computer, BindingResult bindingResult) {
         return computerRepository.save(computer);
     }
 
     @Override
-    public Computer update(Computer computer, Long id) {
+    public Computer update(Computer computer, Long id, BindingResult bindingResult) {
         computer.setId(id);
         return computerRepository.save(computer);
     }

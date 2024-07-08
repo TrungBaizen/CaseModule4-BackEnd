@@ -115,4 +115,11 @@ public class UserServiceImpl implements UserService {
     public Page<User> getAllUsers(Pageable pageable) {
         return userRepository.findAll(pageable);
     }
+
+    @Override
+    public void updateTokenRemainingTime(Long userId, Long remainingTime) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        user.setTime(remainingTime);
+        userRepository.save(user);
+    }
 }

@@ -5,6 +5,8 @@ import com.example.service.ComputerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,13 +28,13 @@ public class ComputerController {
     }
 
     @PostMapping
-    public ResponseEntity<Computer> create(@RequestBody Computer computer) {
-        return new ResponseEntity<>(computerService.save(computer), HttpStatus.CREATED);
+    public ResponseEntity<Computer> create(@Validated @RequestBody Computer computer, BindingResult bindingResult) {
+        return new ResponseEntity<>(computerService.save(computer,bindingResult), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Computer> update(@PathVariable Long id,@RequestBody Computer computer){
-        return new ResponseEntity<>(computerService.update(computer,id), HttpStatus.OK);
+    public ResponseEntity<Computer> update(@Validated @PathVariable Long id,@RequestBody Computer computer,BindingResult bindingResult) {
+        return new ResponseEntity<>(computerService.update(computer,id,bindingResult), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

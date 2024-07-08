@@ -6,6 +6,8 @@ import com.example.model.User;
 import com.example.service.RoleService;
 import com.example.service.UserService;
 import com.example.service.impl.JwtService;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -61,7 +64,21 @@ public class UserController {
         Iterable<User> users = userService.findAll();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
-
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestHeader("Authorization") String token){
+        SecurityContext context = SecurityContextHolder.getContext();
+        Authentication authentication = context.getAuthentication();
+        Long remainingTime;
+        if (authentication != null) {
+            String username = authentication.getName();
+            remainingTime = jwtService.getRemainingTime(token.substring(7)); // Bỏ "Bearer " khỏi token
+            userService.updateTokenRemainingTime(userService.findByUsername(username).getId(), remainingTime);
+            SecurityContextHolder.clearContext(); // Xóa SecurityContext
+        }else {
+            remainingTime = 0L;
+        }
+        return new ResponseEntity<>(remainingTime,HttpStatus.OK);
+    }
     @PostMapping("/register")
     public ResponseEntity createUser(@RequestBody User user, BindingResult bindingResult) {
         if (bindingResult.hasFieldErrors()) {
