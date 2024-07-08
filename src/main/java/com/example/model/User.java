@@ -26,8 +26,6 @@ public class User implements Serializable {
     private Set<Role> roles;
     private Long time;
 
-    @OneToOne
-    private Computer computer;
 
     public User(String username, String password, Set<Role> roles) {
         this.username = username;
@@ -39,14 +37,13 @@ public class User implements Serializable {
         this.id = id;
     }
 
-    public User(Long id, String username, String password, boolean enabled, Set<Role> roles, Long time, Computer computer) {
+    public User(Long id, String username, String password, boolean enabled, Set<Role> roles, Long time) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.enabled = enabled;
         this.roles = roles;
         this.time = time;
-        this.computer = computer;
     }
 
     public Long getTime() {
@@ -100,11 +97,4 @@ public class User implements Serializable {
         this.roles = roles;
     }
 
-    public Computer getComputer() {
-        return computer;
-    }
-
-    public void setComputer(Computer computer) {
-        this.computer = computer;
-    }
 }

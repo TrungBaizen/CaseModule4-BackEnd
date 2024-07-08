@@ -15,4 +15,14 @@ public class OrderDetailServiceImpl implements OrderDetailService {
     public List<OrderAdminDTO> findOrderDetailsWithTotals(Pageable pageable) {
         return orderDetailRepository.findOrderDetailsWithTotals(pageable);
     }
+
+    @Override
+    public void deleteOrderByOrderDetailId(Long orderDetailId) {
+        orderDetailRepository.deleteOrderByOrderDetailId(orderDetailId);
+    }
+
+    @Override
+    public List<OrderAdminDTO> getOrderDetailsByUsername(String username) {
+        return orderDetailRepository.getOrderDetailsByUsername(username);
+    }
 }
