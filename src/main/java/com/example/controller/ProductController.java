@@ -51,12 +51,12 @@ public class ProductController {
     }
 
     @GetMapping("/food")
-    public ResponseEntity<List<Product>> showAllFood(){
+    public ResponseEntity<List<Product>> showAllFood() {
         return new ResponseEntity<>(productService.showAllFood(), HttpStatus.OK);
     }
 
     @GetMapping("/drink")
-    public ResponseEntity<List<Product>> showAllDrink(){
+    public ResponseEntity<List<Product>> showAllDrink() {
         return new ResponseEntity<>(productService.showAllDrink(), HttpStatus.OK);
     }
 }
