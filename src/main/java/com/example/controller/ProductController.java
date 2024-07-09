@@ -16,10 +16,12 @@ import java.util.List;
 @RequestMapping("/products")
 public class ProductController {
     private final ProductService productService;
+
     @Autowired
     public ProductController(ProductService productService) {
         this.productService = productService;
     }
+
     @GetMapping
     public ResponseEntity<List<Product>> getAll() {
         return new ResponseEntity<>(productService.findAll(), HttpStatus.OK);
@@ -27,12 +29,12 @@ public class ProductController {
 
     @PostMapping("/add")
     public ResponseEntity<Product> create(@Validated @RequestBody Product product, BindingResult bindingResult) {
-        return new ResponseEntity<>(productService.save(product,bindingResult), HttpStatus.CREATED);
+        return new ResponseEntity<>(productService.save(product, bindingResult), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Product> update(@Validated @PathVariable Long id,@RequestBody Product product,BindingResult bindingResult){
-        return new ResponseEntity<>(productService.update(product,id,bindingResult), HttpStatus.OK);
+    public ResponseEntity<Product> update(@Validated @PathVariable Long id, @RequestBody Product product, BindingResult bindingResult) {
+        return new ResponseEntity<>(productService.update(product, id, bindingResult), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
@@ -42,11 +44,21 @@ public class ProductController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable Long id) {
-        return new ResponseEntity<>(productService.findById(id),HttpStatus.OK);
+        return new ResponseEntity<>(productService.findById(id), HttpStatus.OK);
     }
 
     @GetMapping("/search")
     public ResponseEntity<List<Product>> getProductById(@RequestParam String name) {
         return new ResponseEntity<>(productService.findByName(name), HttpStatus.OK);
+    }
+
+    @GetMapping("/foods")
+    public ResponseEntity<List<Product>> showAllFood() {
+        return new ResponseEntity<>(productService.showAllFood(), HttpStatus.OK);
+    }
+
+    @GetMapping("/drinks")
+    public ResponseEntity<List<Product>> showAllDrink() {
+        return new ResponseEntity<>(productService.showAllDrink(), HttpStatus.OK);
     }
 }

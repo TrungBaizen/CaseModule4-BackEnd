@@ -25,4 +25,11 @@ public class Product {
     private String image;
     @ManyToOne
     private Category category;
+
+    public Product(Long id, String name, Double price, String image) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.image = image;
+    }
 }

@@ -9,6 +9,5 @@ public interface OrderAdminDTO {
     Integer getQuantity();
     Double getTotal();
     LocalDateTime getOrderDate();
-    Double getAllTotal();
     String getUsername();
 }
