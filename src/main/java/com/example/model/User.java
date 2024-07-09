@@ -19,8 +19,6 @@ public class User implements Serializable {
     @Column(nullable = false)
     private String password;
     private boolean enabled = false;
-    @OneToOne
-    private Computer computer;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_role",
             joinColumns = {@JoinColumn(name = "user_id")},
@@ -44,12 +42,11 @@ public class User implements Serializable {
         this.id = id;
     }
 
-    public User(Long id, String username, String password, boolean enabled, Computer computer, Set<Role> roles, Long time, Long identityCode) {
+    public User(Long id, String username, String password, boolean enabled, Set<Role> roles, Long time, Long identityCode) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.enabled = enabled;
-        this.computer = computer;
         this.roles = roles;
         this.time = time;
         this.identityCode = identityCode;
@@ -106,13 +103,6 @@ public class User implements Serializable {
         this.roles = roles;
     }
 
-    public Computer getComputer() {
-        return computer;
-    }
-
-    public void setComputer(Computer computer) {
-        this.computer = computer;
-    }
 
     public void setIdentityCode(Long identityCode) {
         this.identityCode = identityCode;
