@@ -25,4 +25,6 @@ public interface UserService extends UserDetailsService {
 
     boolean isRegister(User user);
     void updateTokenRemainingTime(Long userId, Long remainingTime);
+    Optional<User> findByIdentityCode(Long id);
+    User updateEnabled(String username , boolean enabled);
 }

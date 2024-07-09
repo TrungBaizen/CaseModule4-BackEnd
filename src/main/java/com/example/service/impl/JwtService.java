@@ -24,14 +24,14 @@ public class JwtService {
     private static final Logger logger = LoggerFactory.getLogger(JwtService.class.getName());
 // tạo ra token dựa vào username , thời gian hiện tại , thời gian sống của token và 1 một mã bí mật của security hỗ trợ
     public String generateTokenLogin(Authentication authentication) {
-        long EXPIRE_TIME ;
+        long EXPIRE_TIME;
         UserPrinciple userPrincipal = (UserPrinciple) authentication.getPrincipal();
         String role = userPrincipal.getAuthorities().toString();
         if (role.contains("ADMIN")){
              EXPIRE_TIME = 86400000000L;
         }else {
-             EXPIRE_TIME = setTimeToken();
-        }
+        EXPIRE_TIME = setTimeToken();
+    }
         return Jwts.builder()
                 .setSubject((userPrincipal.getUsername()))
                 .setIssuedAt(new Date())
