@@ -8,6 +8,8 @@ import com.example.service.UserService;
 import com.example.service.impl.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import jakarta.transaction.Transactional;
+import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,14 +24,18 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin("*")
+@Transactional
 public class UserController {
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -59,32 +65,53 @@ public class UserController {
         Iterable<User> users = userService.findAll();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
+
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(@RequestHeader("Authorization") String token){
+    public ResponseEntity<?> logout(@RequestHeader("Authorization") String token) {
         SecurityContext context = SecurityContextHolder.getContext();
         Authentication authentication = context.getAuthentication();
+        userService.updateEnabled(authentication.getName(), false);
         Long remainingTime;
         if (authentication != null) {
             String username = authentication.getName();
             remainingTime = jwtService.getRemainingTime(token.substring(7)); // Bỏ "Bearer " khỏi token
             userService.updateTokenRemainingTime(userService.findByUsername(username).getId(), remainingTime);
             SecurityContextHolder.clearContext(); // Xóa SecurityContext
-        }else {
+        } else {
             remainingTime = 0L;
         }
-        return new ResponseEntity<>(remainingTime,HttpStatus.OK);
+        return new ResponseEntity<>(remainingTime, HttpStatus.OK);
     }
+
     @PostMapping("/register")
-    public ResponseEntity createUser(@RequestBody User user, BindingResult bindingResult) {
-        if (bindingResult.hasFieldErrors()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    public ResponseEntity<?> createUser(@Validated @RequestBody User user, BindingResult bindingResult) {
+        List<String> errors = ExceptionController.getMessageError(bindingResult);
+        if (user.getUsername().isEmpty()) {
+            errors.add("username: Vui lòng không để trống");
         }
-        Iterable<User> users = userService.findAll();
-        for (User currentUser : users) {
-            if (currentUser.getUsername().equals(user.getUsername())) {
-                return new ResponseEntity<>("Username existed", HttpStatus.OK);
-            }
+        if (user.getPassword().isEmpty()) {
+            errors.add("password: Vui lòng không để trống");
         }
+        if (user.getIdentityCode() == 0L) {
+            errors.add("identityCode: Vui lòng nhập mã số căn cước");
+        }
+        if (userService.isRegister(user)) {
+            errors.add("username: Tên đăng nhập đã tồn tại");
+        }
+        if (userService.findByIdentityCode(user.getIdentityCode()).isPresent()) {
+            errors.add("identityCode: Mã số căn cước đã tồn tại");
+        }
+        if (!errors.isEmpty()) {
+            throw new ValidationException(errors.stream().collect(Collectors.joining("; ")));
+        }
+
+
+//        Iterable<User> users = userService.findAll();
+//        for (User currentUser : users) {
+//            if (currentUser.getUsername().equals(user.getUsername())) {
+//                return new ResponseEntity<>("Username existed", HttpStatus.OK);
+//            }
+//        }
         if (user.getRoles() == null) {
             Role role1 = roleService.findByName("ROLE_USER");
             Set<Role> roles1 = new HashSet<>();
@@ -97,15 +124,15 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody User user) {
+    public ResponseEntity<?> login(@Validated @RequestBody User user,BindingResult bindingResult) {
         // kiểm tra tài khoản mật khẩu
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
+        User currentUser = userService.updateEnabled(user.getUsername(), true);
         // đúng thì tạo ra SecurityContextHolder để lưu trữ đối tượng đang đăng nhập
         SecurityContextHolder.getContext().setAuthentication(authentication);
         // tạo ra token
         String jwt = jwtService.generateTokenLogin(authentication);
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        User currentUser = userService.findByUsername(user.getUsername());
         return ResponseEntity.ok(new JwtResponse(jwt, currentUser.getId(), userDetails.getUsername(), userDetails.getAuthorities()));
     }
 

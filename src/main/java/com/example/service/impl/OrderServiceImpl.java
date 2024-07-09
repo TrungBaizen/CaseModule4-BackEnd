@@ -1,7 +1,9 @@
 package com.example.service.impl;
 
+import com.example.controller.ExceptionController;
 import com.example.model.Order;
 import com.example.service.OrderService;
+import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
@@ -15,7 +17,9 @@ import com.example.repository.UserRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -34,24 +38,13 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public void addOrder(Long userId, Long productId, Integer quantity, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            if (quantity == null || quantity < 1) {
-//                throw new ("Số lượng phải lớn hơn 1");
-            }
+            List<String> errors = ExceptionController.getMessageError(bindingResult);
+            throw new ValidationException(errors.stream().collect(Collectors.joining("; ")));
         }
 
         Optional<Product> productOptional = productRepository.findById(productId);
-        // kiểm tra xem sản phẩm tồn tại không
-        if (!productOptional.isPresent()) {
-//            throw new ("không tồn tại sản phẩm");
-        }
-
         Optional<User> userOptional = userRepository.findById(userId);
-        if (!userOptional.isPresent()) {
-//            throw new ("không tồn tại người dùng");
-        }
-
         User user = userOptional.get();
-
         Product product = productOptional.get();
 
         // Kiểm tra xem sản phẩm đã có trong giỏ hàng của người dùng chưa

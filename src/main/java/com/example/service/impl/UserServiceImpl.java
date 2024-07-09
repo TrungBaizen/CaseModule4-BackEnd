@@ -78,6 +78,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Optional<User> findByIdentityCode(Long identityCode) {
+        return userRepository.findByIdentityCode(identityCode);
+    }
+
+    @Override
+    public User updateEnabled(String username,boolean enabled) {
+        User currentUser = findByUsername(username);
+        if (currentUser != null) {
+            currentUser.setEnabled(enabled);
+            return userRepository.save(currentUser);
+        }
+        return null;
+    }
+
+    @Override
     public UserDetails loadUserById(Long id) {
         Optional<User> user = userRepository.findById(id);
         if (user.isEmpty()) {
