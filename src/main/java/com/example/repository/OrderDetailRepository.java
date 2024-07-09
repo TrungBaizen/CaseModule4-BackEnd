@@ -6,8 +6,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import java.util.List;
+import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Optional;
+
+@Repository
 public interface OrderDetailRepository extends JpaRepository<OrderDetail, Long> {
 
     @Query(value = "select od.id , p.name as product_name , u.name as user_name from Orderdetail od join Orders o on od.order_id = o.id join Product p on od.product_id = p.id join User u on o.user_id = u.id", nativeQuery = true)
@@ -24,5 +28,6 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, Long> 
     @Query(value = "CALL get_order_details_by_username(:username)", nativeQuery = true)
     List<OrderAdminDTO> getOrderDetailsByUsername(String username);
 
-
+    @Query(value = "CALL get_total_amount_by_username(:username)", nativeQuery = true)
+    Double getTotalAmountByUsername(String username);
 }
