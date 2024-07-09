@@ -1,5 +1,6 @@
 package com.example.controller;
 
+import com.example.model.DTO.OrderDTO;
 import com.example.service.OrderService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,18 +10,15 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin("*")
 @RequestMapping("/order_user")
 public class OrderUserController {
     @Autowired
     private OrderService oderDetailService;
 
     @PostMapping("/add")
-    public ResponseEntity<String> addOrder(
-            @RequestParam Long userId,
-            @RequestParam Long productId,
-            @RequestParam @Valid Integer quantity,
-            BindingResult bindingResult) {
-        oderDetailService.addOrder(userId, productId, quantity, bindingResult);
+    public ResponseEntity<String> addOrder(@RequestBody OrderDTO orderDTO, BindingResult bindingResult) {
+        oderDetailService.addOrder(orderDTO, bindingResult);
         return new ResponseEntity<>("Order added successfully", HttpStatus.OK);
     }
 }

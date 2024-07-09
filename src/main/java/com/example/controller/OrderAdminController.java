@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin("*")
 @RequestMapping("/order_admin")
 public class OrderAdminController {
     @Autowired
@@ -21,7 +22,7 @@ public class OrderAdminController {
         return ResponseEntity.ok(orderAdminList);
     }
 
-    @PostMapping(value = "/delete/{id}")
+    @DeleteMapping (value = "/{id}")
     public ResponseEntity<?> deleteOrderDetail(@PathVariable Long id) {
         orderDetailService.deleteOrderByOrderDetailId(id);
         return ResponseEntity.noContent().build();
@@ -34,7 +35,8 @@ public class OrderAdminController {
     }
 
     @GetMapping("/users/{username}/totalAmount")
-    public Double getTotalAmountByUsername(@PathVariable String username) {
-        return orderDetailService.getTotalAmountByUsername(username);
+    public ResponseEntity<Double> getTotalAmountByUsername(@PathVariable String username) {
+        Double total = orderDetailService.getTotalAmountByUsername(username);
+        return ResponseEntity.ok(total);
     }
 }
