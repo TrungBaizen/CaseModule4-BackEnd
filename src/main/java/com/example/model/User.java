@@ -26,7 +26,7 @@ public class User implements Serializable {
             joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns = {@JoinColumn(name = "role_id")})
     private Set<Role> roles;
-    private Long time;
+    private Long time = 0L;
     @Column(unique = true,nullable = false)
 //    @Pattern(regexp = "^\\d{12}$" , message = "Sai định dạng căn cước công dân")
     private Long identityCode;

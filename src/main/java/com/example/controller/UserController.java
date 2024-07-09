@@ -124,7 +124,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Validated @RequestBody User user,BindingResult bindingResult) {
+    public ResponseEntity<?> login(@RequestBody User user) {
         // kiểm tra tài khoản mật khẩu
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
         User currentUser = userService.updateEnabled(user.getUsername(), true);
@@ -157,5 +157,22 @@ public class UserController {
 
         userService.save(user);
         return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    @PostMapping("/admin/users")
+    public ResponseEntity<User> updateUserByAdmin(@RequestBody User user) {
+        User userExists = userService.findByUsername(user.getUsername());
+        userExists.setPassword(passwordEncoder.encode(user.getPassword()));
+        userService.save(userExists);
+        return new ResponseEntity<>(userExists, HttpStatus.OK);
+    }
+
+    @PostMapping("/admin/users/money")
+    public ResponseEntity<User> addTime(@RequestBody User user) {
+        User userExists = userService.findByUsername(user.getUsername());
+        Long newTime = userExists.getTime() + user.getTime();
+        userExists.setTime(newTime);
+        userService.save(userExists);
+        return new ResponseEntity<>(userExists, HttpStatus.OK);
     }
 }
