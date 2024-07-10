@@ -17,8 +17,8 @@ public class OrderAdminController {
     @Autowired
     private OrderDetailService orderDetailService;
     @GetMapping(value = "/list")
-    public ResponseEntity<List<OrderAdminDTO>> getOrderAdminList(@PageableDefault(value = 5) Pageable pageable) {
-        List<OrderAdminDTO> orderAdminList = orderDetailService.findOrderDetailsWithTotals(pageable);
+    public ResponseEntity<List<OrderAdminDTO>> getOrderAdminList() {
+        List<OrderAdminDTO> orderAdminList = orderDetailService.findOrderDetailsWithTotals();
         return ResponseEntity.ok(orderAdminList);
     }
 
