@@ -38,6 +38,11 @@ public class User implements Serializable {
         this.roles = roles;
     }
 
+    public User(String username,Long time) {
+        this.username = username;
+        this.time = time;
+    }
+
     public User(Long id) {
         this.id = id;
     }

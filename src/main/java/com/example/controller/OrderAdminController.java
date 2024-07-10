@@ -2,7 +2,6 @@ package com.example.controller;
 
 import com.example.model.DTO.OrderAdminDTO;
 import com.example.service.OrderDetailService;
-import com.example.service.impl.OrderDetailServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -12,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin("*")
 @RequestMapping("/order_admin")
 public class OrderAdminController {
     @Autowired
@@ -22,15 +22,21 @@ public class OrderAdminController {
         return ResponseEntity.ok(orderAdminList);
     }
 
-    @PostMapping(value = "/delete/{id}")
+    @DeleteMapping (value = "/{id}")
     public ResponseEntity<?> deleteOrderDetail(@PathVariable Long id) {
         orderDetailService.deleteOrderByOrderDetailId(id);
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping(value = "/by_username/{username}")
-    public ResponseEntity<List<OrderAdminDTO>> getOrderDetailsByUsername(@PathVariable String username) {
-        List<OrderAdminDTO> orderDetailsByUsername = orderDetailService.getOrderDetailsByUsername(username);
+    @GetMapping(value = "/search")
+    public ResponseEntity<List<OrderAdminDTO>> getOrderDetailsByUsername(@RequestParam String username ,@PageableDefault(value = 5) Pageable pageable) {
+        List<OrderAdminDTO> orderDetailsByUsername = orderDetailService.getOrderDetailsByUsername(username , pageable);
         return ResponseEntity.ok(orderDetailsByUsername);
+    }
+
+    @GetMapping("/users/{username}/totalAmount")
+    public ResponseEntity<Double> getTotalAmountByUsername(@PathVariable String username) {
+        Double total = orderDetailService.getTotalAmountByUsername(username);
+        return ResponseEntity.ok(total);
     }
 }

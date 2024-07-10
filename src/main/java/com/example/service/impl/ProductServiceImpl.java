@@ -78,4 +78,15 @@ public class ProductServiceImpl implements ProductService {
         }
         return productRepository.findByNameContaining(name);
     }
+
+    @Override
+    public List<Product> showAllFood() {
+        return productRepository.findAllByCategoryName("đồ ăn");
+    }
+
+    @Override
+    public List<Product> showAllDrink() {
+        return productRepository.findAllByCategoryName("đồ uống");
+    }
+
 }

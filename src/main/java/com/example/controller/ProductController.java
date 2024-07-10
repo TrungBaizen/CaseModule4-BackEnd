@@ -49,4 +49,14 @@ public class ProductController {
     public ResponseEntity<List<Product>> getProductById(@RequestParam String name) {
         return new ResponseEntity<>(productService.findByName(name), HttpStatus.OK);
     }
+
+    @GetMapping("/food")
+    public ResponseEntity<List<Product>> showAllFood() {
+        return new ResponseEntity<>(productService.showAllFood(), HttpStatus.OK);
+    }
+
+    @GetMapping("/drink")
+    public ResponseEntity<List<Product>> showAllDrink() {
+        return new ResponseEntity<>(productService.showAllDrink(), HttpStatus.OK);
+    }
 }

@@ -126,14 +126,17 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User user) {
         // kiểm tra tài khoản mật khẩu
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
         User currentUser = userService.updateEnabled(user.getUsername(), true);
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
         // đúng thì tạo ra SecurityContextHolder để lưu trữ đối tượng đang đăng nhập
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        // tạo ra token
-        String jwt = jwtService.generateTokenLogin(authentication);
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        return ResponseEntity.ok(new JwtResponse(jwt, currentUser.getId(), userDetails.getUsername(), userDetails.getAuthorities()));
+        if (currentUser.getTime() > 0){
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            // tạo ra token
+            String jwt = jwtService.generateTokenLogin(authentication);
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            return ResponseEntity.ok(new JwtResponse(jwt, currentUser.getId(), userDetails.getUsername(), userDetails.getAuthorities()));
+        }
+       return new ResponseEntity<>("Tài khoản hiện đã hết tiền",HttpStatus.UNAUTHORIZED);
     }
 
 
@@ -175,5 +178,12 @@ public class UserController {
         userExists.setTime(newTime);
         userService.save(userExists);
         return new ResponseEntity<>(userExists, HttpStatus.OK);
+    }
+
+    @GetMapping("/users/time")
+    public ResponseEntity<User> getTimeRemaining(@RequestParam String username) {
+        User userExists = userService.findByUsername(username);
+        Long remainingTime = jwtService.getRemainingTime(jwtService.generateTokenLogin(new UsernamePasswordAuthenticationToken(username, userExists.getPassword())));
+        return new ResponseEntity<>(new User(userExists.getUsername(), remainingTime), HttpStatus.OK);
     }
 }
