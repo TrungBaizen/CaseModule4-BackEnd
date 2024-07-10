@@ -35,7 +35,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin("*")
-@Transactional
 public class UserController {
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -66,7 +65,7 @@ public class UserController {
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    @PostMapping("/logout")
+    @PostMapping("user/logout")
     public ResponseEntity<?> logout(@RequestHeader("Authorization") String token) {
         SecurityContext context = SecurityContextHolder.getContext();
         Authentication authentication = context.getAuthentication();
@@ -104,14 +103,6 @@ public class UserController {
         if (!errors.isEmpty()) {
             throw new ValidationException(errors.stream().collect(Collectors.joining("; ")));
         }
-
-
-//        Iterable<User> users = userService.findAll();
-//        for (User currentUser : users) {
-//            if (currentUser.getUsername().equals(user.getUsername())) {
-//                return new ResponseEntity<>("Username existed", HttpStatus.OK);
-//            }
-//        }
         if (user.getRoles() == null) {
             Role role1 = roleService.findByName("ROLE_USER");
             Set<Role> roles1 = new HashSet<>();
@@ -136,6 +127,7 @@ public class UserController {
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             return ResponseEntity.ok(new JwtResponse(jwt, currentUser.getId(), userDetails.getUsername(), userDetails.getAuthorities()));
         }
+        userService.updateEnabled(user.getUsername(), false);
        return new ResponseEntity<>("Tài khoản hiện đã hết tiền",HttpStatus.UNAUTHORIZED);
     }
 
