@@ -127,7 +127,7 @@ public class UserController {
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             return ResponseEntity.ok(new JwtResponse(jwt, currentUser.getId(), userDetails.getUsername(), userDetails.getAuthorities()));
         }
-        userService.updateEnabled(user.getUsername(), false);
+         userService.updateEnabled(user.getUsername(), false);
        return new ResponseEntity<>("Tài khoản hiện đã hết tiền",HttpStatus.UNAUTHORIZED);
     }
 
@@ -172,10 +172,14 @@ public class UserController {
         return new ResponseEntity<>(userExists, HttpStatus.OK);
     }
 
-    @GetMapping("/users/time")
-    public ResponseEntity<User> getTimeRemaining(@RequestParam String username) {
-        User userExists = userService.findByUsername(username);
-        Long remainingTime = jwtService.getRemainingTime(jwtService.generateTokenLogin(new UsernamePasswordAuthenticationToken(username, userExists.getPassword())));
-        return new ResponseEntity<>(new User(userExists.getUsername(), remainingTime), HttpStatus.OK);
+    @PostMapping("/users/time")
+    public ResponseEntity<?> getTimeRemaining(@RequestHeader("Authorization") String token) {
+        SecurityContext context = SecurityContextHolder.getContext();
+        Authentication authentication = context.getAuthentication();
+        if (authentication != null) {
+            Long remainingTime = jwtService.getRemainingTime(token.substring(7));
+            return new ResponseEntity<>(remainingTime, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(0L, HttpStatus.OK);
     }
 }
