@@ -17,12 +17,24 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotEmpty
+
+    @NotEmpty(message = "Không để trống")
     @Column(unique = true)
     private String name;
-    @NotNull
+
+    @NotNull(message = "Không để trống")
     private Double price;
+
     private String image;
+
     @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
     private Category category;
+
+    public Product(Long id,String name,Double price,String image){
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.image = image;
+    }
 }

@@ -77,6 +77,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Optional<User> findByIdentityCode(Long identityCode) {
+        return userRepository.findByIdentityCode(identityCode);
+    }
+
+    @Override
+    public User updateEnabled(String username,boolean enabled) {
+        User currentUser = findByUsername(username);
+        if (currentUser != null) {
+            currentUser.setEnabled(enabled);
+            return userRepository.save(currentUser);
+        }
+        return null;
+    }
+
+    @Override
     public UserDetails loadUserById(Long id) {
         Optional<User> user = userRepository.findById(id);
         if (user.isEmpty()) {
@@ -113,5 +128,12 @@ public class UserServiceImpl implements UserService {
     }
     public Page<User> getAllUsers(Pageable pageable) {
         return userRepository.findAll(pageable);
+    }
+
+    @Override
+    public void updateTokenRemainingTime(Long userId, Long remainingTime) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        user.setTime(remainingTime);
+        userRepository.save(user);
     }
 }

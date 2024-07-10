@@ -6,6 +6,10 @@ import com.example.model.User;
 import com.example.service.RoleService;
 import com.example.service.UserService;
 import com.example.service.impl.JwtService;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import jakarta.transaction.Transactional;
+import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,15 +19,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin("*")
@@ -50,11 +58,6 @@ public class UserController {
         return userService.getAllUsers(pageable);
     }
 
-    @GetMapping("/users")
-    public ResponseEntity<Iterable<User>> showAllUser() {
-        Iterable<User> users = userService.findAll();
-        return new ResponseEntity<>(users, HttpStatus.OK);
-    }
 
     @GetMapping("/admin/users")
     public ResponseEntity<Iterable<User>> showAllUserByAdmin() {
@@ -62,16 +65,43 @@ public class UserController {
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    @PostMapping("/register")
-    public ResponseEntity createUser(@RequestBody User user, BindingResult bindingResult) {
-        if (bindingResult.hasFieldErrors()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    @PostMapping("user/logout")
+    public ResponseEntity<?> logout(@RequestHeader("Authorization") String token) {
+        SecurityContext context = SecurityContextHolder.getContext();
+        Authentication authentication = context.getAuthentication();
+        userService.updateEnabled(authentication.getName(), false);
+        Long remainingTime;
+        if (authentication != null) {
+            String username = authentication.getName();
+            remainingTime = jwtService.getRemainingTime(token.substring(7)); // Bỏ "Bearer " khỏi token
+            userService.updateTokenRemainingTime(userService.findByUsername(username).getId(), remainingTime);
+            SecurityContextHolder.clearContext(); // Xóa SecurityContext
+        } else {
+            remainingTime = 0L;
         }
-        Iterable<User> users = userService.findAll();
-        for (User currentUser : users) {
-            if (currentUser.getUsername().equals(user.getUsername())) {
-                return new ResponseEntity<>("Username existed", HttpStatus.OK);
-            }
+        return new ResponseEntity<>(remainingTime, HttpStatus.OK);
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<?> createUser(@Validated @RequestBody User user, BindingResult bindingResult) {
+        List<String> errors = ExceptionController.getMessageError(bindingResult);
+        if (user.getUsername().isEmpty()) {
+            errors.add("username: Vui lòng không để trống");
+        }
+        if (user.getPassword().isEmpty()) {
+            errors.add("password: Vui lòng không để trống");
+        }
+        if (user.getIdentityCode() == 0L) {
+            errors.add("identityCode: Vui lòng nhập mã số căn cước");
+        }
+        if (userService.isRegister(user)) {
+            errors.add("username: Tên đăng nhập đã tồn tại");
+        }
+        if (userService.findByIdentityCode(user.getIdentityCode()).isPresent()) {
+            errors.add("identityCode: Mã số căn cước đã tồn tại");
+        }
+        if (!errors.isEmpty()) {
+            throw new ValidationException(errors.stream().collect(Collectors.joining("; ")));
         }
         if (user.getRoles() == null) {
             Role role1 = roleService.findByName("ROLE_USER");
@@ -87,20 +117,20 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User user) {
         // kiểm tra tài khoản mật khẩu
+        User currentUser = userService.updateEnabled(user.getUsername(), true);
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
         // đúng thì tạo ra SecurityContextHolder để lưu trữ đối tượng đang đăng nhập
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        // tạo ra token
-        String jwt = jwtService.generateTokenLogin(authentication);
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        User currentUser = userService.findByUsername(user.getUsername());
-        return ResponseEntity.ok(new JwtResponse(jwt, currentUser.getId(), userDetails.getUsername(), userDetails.getAuthorities()));
+        if (currentUser.getTime() > 0){
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            // tạo ra token
+            String jwt = jwtService.generateTokenLogin(authentication);
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            return ResponseEntity.ok(new JwtResponse(jwt, currentUser.getId(), userDetails.getUsername(), userDetails.getAuthorities()));
+        }
+        userService.updateEnabled(user.getUsername(), false);
+       return new ResponseEntity<>("Tài khoản hiện đã hết tiền",HttpStatus.UNAUTHORIZED);
     }
 
-    @GetMapping("/hello")
-    public ResponseEntity<String> hello() {
-        return new ResponseEntity("Hello World", HttpStatus.OK);
-    }
 
     @GetMapping("/users/{id}")
     public ResponseEntity<User> getProfile(@PathVariable Long id) {
@@ -122,5 +152,30 @@ public class UserController {
 
         userService.save(user);
         return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    @PostMapping("/admin/users")
+    public ResponseEntity<User> updateUserByAdmin(@RequestBody User user) {
+        User userExists = userService.findByUsername(user.getUsername());
+        userExists.setPassword(passwordEncoder.encode(user.getPassword()));
+        userService.save(userExists);
+        return new ResponseEntity<>(userExists, HttpStatus.OK);
+    }
+
+    @PostMapping("/admin/users/money")
+    public ResponseEntity<User> addTime(@RequestBody User user) {
+
+        User userExists = userService.findByUsername(user.getUsername());
+        Long newTime = userExists.getTime() + user.getTime();
+        userExists.setTime(newTime);
+        userService.save(userExists);
+        return new ResponseEntity<>(userExists, HttpStatus.OK);
+    }
+
+    @GetMapping("/users/time")
+    public ResponseEntity<User> getTimeRemaining(@RequestParam String username) {
+        User userExists = userService.findByUsername(username);
+        Long remainingTime = jwtService.getRemainingTime(jwtService.generateTokenLogin(new UsernamePasswordAuthenticationToken(username, userExists.getPassword())));
+        return new ResponseEntity<>(new User(userExists.getUsername(), remainingTime), HttpStatus.OK);
     }
 }

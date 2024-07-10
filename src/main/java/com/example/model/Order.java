@@ -19,12 +19,13 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private LocalDateTime orderDate;
-    private Double total;
     @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @PrePersist
     public void orderDate(){
         this.orderDate = LocalDateTime.now();
     }
+
 }
