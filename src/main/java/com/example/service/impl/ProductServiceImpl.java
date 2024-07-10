@@ -35,13 +35,15 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product update(Product product, Long id, BindingResult bindingResult) {
-        findById(id);
+        Product productById = findById(id);
         List<String> errors = ExceptionController.getMessageError(bindingResult);
-        if (productRepository.existsProductByName(product.getName())) {
-            errors.add("name: Tên đã tồn tại");
-        }
-        if (errors.size() > 0) {
-            throw new ValidationException(errors.stream().collect(Collectors.joining("; ")));
+        if (!product.getName().equals(productById.getName())){
+            if (productRepository.existsProductByName(product.getName())) {
+                errors.add("name: Tên đã tồn tại");
+            }
+            if (errors.size() > 0) {
+                throw new ValidationException(errors.stream().collect(Collectors.joining("; ")));
+            }
         }
         product.setId(id);
         return productRepository.save(product);
