@@ -4,10 +4,10 @@ import java.time.LocalDateTime;
 
 public interface OrderAdminDTO {
     Long getId();
-    String getName();
+    String getProductName();
     Double getPrice();
     Integer getQuantity();
     Double getTotal();
     LocalDateTime getOrderDate();
-    String getUsername();
+    String getUserName();
 }
