@@ -17,13 +17,18 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @NotEmpty(message = "Không để trống")
     @Column(unique = true)
     private String name;
+
     @NotNull(message = "Không để trống")
     private Double price;
+
     private String image;
+
     @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
     public Product(Long id, String name, Double price, String image) {

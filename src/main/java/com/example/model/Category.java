@@ -16,6 +16,7 @@ public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @NotEmpty(message = "Không được để trống")
     @Column(unique = true)
     private String name;

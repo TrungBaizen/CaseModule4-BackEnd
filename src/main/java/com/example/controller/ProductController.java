@@ -16,12 +16,10 @@ import java.util.List;
 @RequestMapping("/products")
 public class ProductController {
     private final ProductService productService;
-
     @Autowired
     public ProductController(ProductService productService) {
         this.productService = productService;
     }
-
     @GetMapping
     public ResponseEntity<List<Product>> getAll() {
         return new ResponseEntity<>(productService.findAll(), HttpStatus.OK);
@@ -52,12 +50,12 @@ public class ProductController {
         return new ResponseEntity<>(productService.findByName(name), HttpStatus.OK);
     }
 
-    @GetMapping("/foods")
+    @GetMapping("/food")
     public ResponseEntity<List<Product>> showAllFood() {
         return new ResponseEntity<>(productService.showAllFood(), HttpStatus.OK);
     }
 
-    @GetMapping("/drinks")
+    @GetMapping("/drink")
     public ResponseEntity<List<Product>> showAllDrink() {
         return new ResponseEntity<>(productService.showAllDrink(), HttpStatus.OK);
     }

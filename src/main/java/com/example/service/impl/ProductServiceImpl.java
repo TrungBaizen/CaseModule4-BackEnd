@@ -81,12 +81,12 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<Product> showAllFood() {
-        return productRepository.showAllFood();
+        return productRepository.findAllByCategoryName("đồ ăn");
     }
 
     @Override
     public List<Product> showAllDrink() {
-        return productRepository.showAllDrink();
+        return productRepository.findAllByCategoryName("đồ uống");
     }
 
 }
