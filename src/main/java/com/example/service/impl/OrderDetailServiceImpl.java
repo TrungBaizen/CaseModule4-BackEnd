@@ -25,7 +25,7 @@ public class OrderDetailServiceImpl implements OrderDetailService {
     }
 
     @Override
-    public List<OrderAdminDTO> getOrderDetailsByUsername(String username , Pageable pageable) {
+    public List<OrderAdminDTO> getOrderDetailsByUsername(String username) {
         return orderDetailRepository.getOrderDetailsByUsername(username);
     }
 

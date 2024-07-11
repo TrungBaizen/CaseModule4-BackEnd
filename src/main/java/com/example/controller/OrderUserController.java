@@ -17,8 +17,8 @@ public class OrderUserController {
     private OrderService oderDetailService;
 
     @PostMapping("/add")
-    public ResponseEntity<String> addOrder(@RequestBody OrderDTO orderDTO, BindingResult bindingResult) {
-        oderDetailService.addOrder(orderDTO, bindingResult);
+    public ResponseEntity<String> addOrder(@RequestBody OrderDTO orderDTO) {
+        oderDetailService.addOrder(orderDTO);
         return new ResponseEntity<>("Order added successfully", HttpStatus.OK);
     }
 }

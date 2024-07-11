@@ -6,9 +6,6 @@ import com.example.model.User;
 import com.example.service.RoleService;
 import com.example.service.UserService;
 import com.example.service.impl.JwtService;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import jakarta.transaction.Transactional;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -51,12 +48,12 @@ public class UserController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @GetMapping("/users/paging")
-    public Page<User> getUsers(@RequestParam(defaultValue = "0") int page,
-                               @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return userService.getAllUsers(pageable);
-    }
+//    @GetMapping("/users/paging")
+//    public Page<User> getUsers(@RequestParam(defaultValue = "0") int page,
+//                               @RequestParam(defaultValue = "10") int size) {
+//        Pageable pageable = PageRequest.of(page, size);
+//        return userService.getAllUsers(pageable);
+//    }
 
 
     @GetMapping("/admin/users")
@@ -132,11 +129,6 @@ public class UserController {
     }
 
 
-    @GetMapping("/users/{id}")
-    public ResponseEntity<User> getProfile(@PathVariable Long id) {
-        Optional<User> userOptional = this.userService.findById(id);
-        return userOptional.map(user -> new ResponseEntity<>(user, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
 
     @PutMapping("/users/{id}")
     public ResponseEntity<User> updateUserProfile(@PathVariable Long id, @RequestBody User user) {

@@ -10,6 +10,6 @@ public interface OrderDetailService {
 
     void deleteOrderByOrderDetailId(Long orderDetailId);
 
-    List<OrderAdminDTO> getOrderDetailsByUsername(String username , Pageable pageable);
+    List<OrderAdminDTO> getOrderDetailsByUsername(String username );
     Double getTotalAmountByUsername(String username);
 }
