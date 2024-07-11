@@ -17,8 +17,8 @@ public class OrderAdminController {
     @Autowired
     private OrderDetailService orderDetailService;
     @GetMapping(value = "/list")
-    public ResponseEntity<List<OrderAdminDTO>> getOrderAdminList(@PageableDefault(value = 5) Pageable pageable) {
-        List<OrderAdminDTO> orderAdminList = orderDetailService.findOrderDetailsWithTotals(pageable);
+    public ResponseEntity<List<OrderAdminDTO>> getOrderAdminList() {
+        List<OrderAdminDTO> orderAdminList = orderDetailService.findOrderDetailsWithTotals();
         return ResponseEntity.ok(orderAdminList);
     }
 
@@ -29,8 +29,8 @@ public class OrderAdminController {
     }
 
     @GetMapping(value = "/search")
-    public ResponseEntity<List<OrderAdminDTO>> getOrderDetailsByUsername(@RequestParam String username ,@PageableDefault(value = 5) Pageable pageable) {
-        List<OrderAdminDTO> orderDetailsByUsername = orderDetailService.getOrderDetailsByUsername(username , pageable);
+    public ResponseEntity<List<OrderAdminDTO>> getOrderDetailsByUsername(@RequestParam String username) {
+        List<OrderAdminDTO> orderDetailsByUsername = orderDetailService.getOrderDetailsByUsername(username);
         return ResponseEntity.ok(orderDetailsByUsername);
     }
 

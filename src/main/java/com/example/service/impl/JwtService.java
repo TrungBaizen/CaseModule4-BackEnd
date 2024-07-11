@@ -9,11 +9,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 
 @Service
 // tương tác với token
@@ -26,7 +29,10 @@ public class JwtService {
     public String generateTokenLogin(Authentication authentication) {
         long EXPIRE_TIME;
         UserPrinciple userPrincipal = (UserPrinciple) authentication.getPrincipal();
-        String role = userPrincipal.getAuthorities().toString();
+        Collection<? extends GrantedAuthority> authorities = userPrincipal.getAuthorities();
+        Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
+        GrantedAuthority firstAuthority = iterator.next();
+        String role = firstAuthority.getAuthority();
         if (role.contains("ADMIN")){
              EXPIRE_TIME = 86400000000L;
         }else {
